@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ ui.nav_login }}{% endblock %}
+
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='contact.css') }}">
+{% endblock %}
+
+{% block content %}
+    <main class="contact-container" style="justify-content: center; margin-top: 50px; margin-bottom: 50px;">
+        <section class="contact-form-section" style="max-width: 500px; width: 100%;">
+            <h2 style="text-align: center;">{{ ui.login_title }}</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="" method="POST" class="contact-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label>{{ ui.label_email }}</label>
+                    {{ form.email(class="form-control", placeholder=ui.ph_email) }}
+                    {% if form.email.errors %}
+                        <span style="color: red; font-size: 0.85rem;">{{ ui.err_email }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ ui.label_password }}</label>
+                    {{ form.password(class="form-control", placeholder=ui.ph_password) }}
+                    {% if form.password.errors %}
+                        <span style="color: red; font-size: 0.85rem;">{{ ui.err_required }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px; flex-direction: row; justify-content: flex-start;">
+                    {{ form.remember(style="width: auto; margin: 0;") }}
+                    <label style="margin: 0;">{{ ui.label_remember }}</label>
+                </div>
+                
+                {{ form.submit(class="submit-btn", value=ui.btn_login) }}
+            </form>
+
+            <p style="margin-top: 20px; text-align: center;">
+                {{ ui.no_account }} 
+                <a href="{{ url_for('auth.register', lang=lang) }}" style="color: #0056b3; font-weight: bold;">{{ ui.link_register }}</a>
+            </p>
+        </section>
+    </main>
+{% endblock %}

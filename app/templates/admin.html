@@ -1,0 +1,192 @@
+{% extends "layout.html" %}
+{% block title %}{{ ui.admin_title }}{% endblock %}
+{% block custom_css %}<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">{% endblock %}
+{% block content %}
+    <main class="admin-container">
+        <header class="admin-header">
+            <h1>⚙️ {{ ui.admin_title }}</h1>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>👥 {{ ui.stat_users }}</h3>
+                <p class="stat-number">{{ u_count }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>✈️ {{ ui.stat_bookings }}</h3>
+                <p class="stat-number">{{ b_count }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>⭐ {{ ui.stat_reviews }}</h3>
+                <p class="stat-number">{{ r_count }}</p>
+            </div>
+        </div>
+
+        <section class="admin-section">
+            <h2 class="section-title">📋 {{ ui.manage_bookings }}</h2>
+            {% if pending %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <tr>
+                        <th>{{ ui.th_flight }}</th>
+                        <th>{{ ui.th_from }}</th>
+                        <th>{{ ui.th_to }}</th>
+                        <th>{{ ui.th_date }}</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for b in pending %}
+                    <tr>
+                        <td dir="ltr"><strong>{{ b.flight_number }}</strong><br><small>{{ b.airline_name }}</small></td>
+                        <td>{{ b.departure_city }}</td>
+                        <td>{{ b.destination_city }}</td>
+                        <td dir="ltr">{{ b.travel_date }}</td>
+                        <td>
+                            <form action="" method="POST" style="display:inline-flex; gap: 5px;">
+                                <input type="hidden" name="booking_id" value="{{ b.id }}">
+                                <button type="submit" name="action" value="approve" class="btn-approve">✔️ {{ ui.btn_approve }}</button>
+                                <button type="submit" name="action" value="reject" class="btn-reject">❌ {{ ui.btn_reject }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% else %}
+                <p class="empty-msg"> All clear! No pending bookings.</p>
+            {% endif %}
+        </section>
+        <section class="admin-section" style="margin-top: 40px; background-color: #f8f9fa;">
+            <h2 class="section-title">➕ {{ ui.add_new_place }}</h2>
+            
+            <form action="" method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                {{ add_form.hidden_tag() }}
+                <input type="hidden" name="action" value="add_place">
+                <input type="hidden" name="edit_place" value="{{ request.args.get('edit_place','') }}">
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_name }}</label>
+                    {{ add_form.name(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_city }}</label>
+                    {{ add_form.city(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_category }}</label>
+                    {{ add_form.category(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_hook }}</label>
+                    {{ add_form.hook(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label style="font-weight: bold;">{{ ui.label_desc }}</label>
+                    {{ add_form.description(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;", rows="3") }}
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label style="font-weight: bold;">{{ ui.label_transportation }}</label>
+                    {{ add_form.transportation(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_activities }}</label>
+                    {{ add_form.activities(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_best_time }}</label>
+                    {{ add_form.best_time(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_image }}</label>
+                    {{ add_form.image_file(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;", placeholder="e.g. new_place.jpg") }}
+                    <small style="color: #7f8c8d;">* Add the image to static/images</small>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.rating_txt }}</label>
+                    {{ add_form.rating(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;", placeholder="0:5") }}
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_booking }}</label>
+                    {{ add_form.booking_url(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+
+                <div class="form-group">
+                    <label style="font-weight: bold;">{{ ui.label_location }}</label>
+                    {{ add_form.location_url(style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;") }}
+                </div>
+                <div class="form-group" style="grid-column: span 2; text-align: right;">
+                    {{ add_form.submit(style="background-color: #27ae60; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1.1rem;") }}
+                </div>
+            </form>
+        </section>
+        <section class="admin-section" style="margin-top: 40px;">
+            <h2 class="section-title">⭐ {{ ui.manage_reviews }}</h2>
+            {% if reviews %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <tr>
+                        <th>{{ ui.th_author }}</th>
+                        <th>{{ ui.th_place }}</th>
+                        <th>{{ ui.th_rating }}</th>
+                        <th>{{ ui.th_comment }}</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for rev, username, place_name in reviews %}
+                    <tr>
+                        <td><strong>{{ username }}</strong></td>
+                        <td>{{ place_name }}</td>
+                        <td>{% for i in range(rev.rating) %}⭐{% endfor %}</td>
+                        <td>{{ rev.comment }}</td>
+                        <td>
+                            <form action="" method="POST" style="margin: 0;">
+                                <input type="hidden" name="action" value="delete_review">
+                                <input type="hidden" name="review_id" value="{{ rev.id }}">
+                                <button type="submit" class="btn-reject">🗑️ {{ ui.btn_delete }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% else %}
+                <p class="empty-msg">No reviews found.</p>
+            {% endif %}
+        </section>
+
+        <section class="admin-section" style="margin-top: 40px;">
+            <h2 class="section-title">🗺️ {{ ui.manage_places }}</h2>
+            {% if places %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <tr>
+                        <th>{{ ui.th_image }}</th>
+                        <th>{{ ui.th_place }}</th>
+                        <th>{{ ui.th_city }}</th>
+                        <th>{{ ui.th_rating }}</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for p, place_name, city in places %}
+                    <tr>
+                        <td><img src="{{ url_for('static', filename='images/' + p.image_file) }}" alt="Place" style="width: 60px; height: 40px; border-radius: 5px; object-fit: cover;"></td>
+                        <td><strong>{{ place_name }}</strong></td>
+                        <td>{{ city }}</td>
+                        <td>{{ p.rating }} / 5.0</td>
+                        <td>
+                            <form action="" method="GET" style="display:inline; padding: 5px;">
+                                <input type="hidden" name="edit_place" value="{{ p.id }}">
+                                <button type="submit" class="btn-approve">✏️ {{ ui.btn_edit }}</button>
+                            </form>
+                            <form action="" method="POST" style="margin: 0; padding: 5px">
+                                <input type="hidden" name="action" value="delete_place">
+                                <input type="hidden" name="place_id" value="{{ p.id }}">
+                                <button type="submit" class="btn-reject">🗑️ {{ ui.btn_delete }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% else %}
+                <p class="empty-msg">No places found.</p>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}

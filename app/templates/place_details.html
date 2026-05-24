@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block title %}{{ place.name }}{% endblock %}
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='place_details.css') }}">
+{% endblock %}
+{% block content %}
+    {% if place %}
+    <header class="place-hero" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('{{ url_for('static', filename='images/' + place.image_file) }}');">
+        <div class="hero-content">
+            <span class="badge">{{ place.category }}</span><h1>{{ place.name }}</h1><p class="hook-text">{{ place.hook }}</p>
+        </div>
+    </header>
+    <main class="details-container">
+        <aside class="quick-info">
+            {% if weather %}
+            <div class="info-box weather-box">
+                <h3 class="weather-title">🌤️ {{ ui.weather_title }}</h3>
+                <p><strong>{{ ui.temp }}</strong> <span dir="ltr">{{ weather.temp }} °C</span></p>
+                <p><strong>{{ ui.wind }}</strong> <span dir="ltr">{{ weather.wind }} km/h</span></p>
+            </div>
+            {% endif %}
+
+            <div class="info-box">
+                <h3>{{ ui.location_txt | default('Location') }}</h3>
+                <p>{{ place.location }}</p><br>
+                {% if place.location_url %}
+                    <iframe
+                        src="{{
+                        place.location_url
+                        | replace('!1sar!', '!1s' ~ lang ~ '!')
+                        | replace('!1sen!', '!1s' ~ lang ~ '!')
+                        | replace('!1sfr!', '!1s' ~ lang ~ '!')
+                        | replace('!1ses!', '!1s' ~ lang ~ '!')
+                        | replace('!1sde!', '!1s' ~ lang ~ '!')
+                        }}"
+                        width="300"
+                        height="300"
+                        style="border:0;"
+                        allowfullscreen
+                        loading="lazy">
+                    </iframe>
+                {% endif %}
+            </div>
+            <div class="info-box"><h3>{{ ui.rating_txt | default('Rating') }}</h3><p>{{ place.rating }} / 5.0</p></div>
+            <div class="info-box"><h3>{{ ui.best_time_txt | default('Best Time') }}</h3><p>{{ place.best_time }}</p></div>
+            {% if place.booking_url %}
+                <div class="info-box"><h3>{{ ui.book_ticket_txt | default('Book Now') }}</h3><a href="{{ place.booking_url }}" target="_blank">{{ ui.book_ticket }}</a></div>
+            {% endif %}
+        </aside>
+        <section class="main-content">
+            <h2>{{ ui.about_txt | default('About') }}</h2><p>{{ place.description }}</p>
+            <h2>{{ ui.transport_txt | default('Transportation') }}</h2>
+            {% if place.transportation %}
+            <ul class="transport-list">
+                {% for transport in place.transportation %}
+                    <li>{{ transport }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <h2>{{ ui.activities_txt | default('Activities') }}</h2><p>{{ place.activities }}</p>
+            
+            <div class="reviews-section">
+                <h2>{{ ui.reviews_title }}</h2>
+                
+                {% if reviews %}
+                    {% for rev, user in reviews %}
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span class="review-author">👤 {{ user.username }}</span>
+                            <span class="review-date">{{ rev.created_at.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                        <div class="review-stars">
+                            {% for i in range(rev.rating) %}⭐{% endfor %}
+                        </div>
+                        <p class="review-text">{{ rev.comment }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>{{ ui.no_reviews }}</p>
+                {% endif %}
+
+                <div class="review-form-box">
+                    <h3>{{ ui.write_review }}</h3>
+                    
+                    {% if session.get('user_id') %}
+                        <form action="" method="POST">
+                            {{ form.hidden_tag() }}
+                            <div class="review-form-group">
+                                <label>{{ ui.your_rating }}</label>
+                                {{ form.rating(class="review-input") }}
+                            </div>
+                            <div class="review-form-group">
+                                <label>{{ ui.your_comment }}</label>
+                                {{ form.comment(class="review-input", rows="4") }}
+                            </div>
+                            {{ form.submit(class="review-submit-btn") }}
+                        </form>
+                    {% else %}
+                        <p class="login-alert">{{ ui.login_to_review }}
+                            <a href="{{ url_for('auth.login', lang=lang) }}" class="login-link">{{ ui.login_here }}</a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="flight-promo-card">
+                <h2 class="flight-promo-title">{{ ui.plan_visit }}</h2>
+                <p class="flight-promo-desc">✈️ {{ ui.flight_promo_desc }}</p>
+                <a href="{{ url_for('flights.book_flight', destination=place.location, lang=lang) }}" class="flight-promo-btn">
+                    {{ ui.book_flight_btn }}
+                </a>
+            </div>
+            
+        </section>
+    </main>
+    {% endif %}
+{% endblock %}

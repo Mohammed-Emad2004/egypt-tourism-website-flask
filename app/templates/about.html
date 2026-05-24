@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}{{ ui.nav_about }}{% endblock %}
+{% block custom_css %}<link rel="stylesheet" href="{{ url_for('static', filename='about.css') }}">{% endblock %}
+{% block content %}
+    <header class="about-hero">
+        <div class="hero-content">
+            <h1>{{ ui.about_title }}</h1><p>{{ ui.about_subtitle }}</p>
+        </div>
+    </header>
+    <main class="about-container">
+        <section class="content-section">
+            <div class="text-box">
+                <h2>{{ ui.mission_title }}</h2><p>{{ ui.mission_desc }}</p>
+            </div>
+            <div class="image-box"><img src="{{ url_for('static', filename='images/pyramids.jpg') }}" alt="About"></div>
+        </section>
+        <section class="content-section reverse-layout">
+            <div class="text-box">
+                <h2>{{ ui.vision_title }}</h2><p>{{ ui.vision_desc }}</p>
+            </div>
+            <div class="image-box text-center">
+                <div class="tech-badge">Frontend UI/UX</div>
+                <div class="tech-badge">Backend API</div>
+                <div class="tech-badge">Multi-Language</div>
+            </div>
+        </section>
+    </main>
+{% endblock %}

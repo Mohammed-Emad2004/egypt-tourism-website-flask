@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ ui.page_title_gallery | default('المعرض') }}{% endblock %}
+
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='gallery.css') }}">
+{% endblock %}
+
+{% block content %}
+    <header class="gallery-header">
+        <h1>{{ ui.gallery_title | default('عدسة على مصر') }}</h1>
+        <p>{{ ui.gallery_desc | default('شاهد جمال وعظمة المعالم السياحية المصرية من خلال هذه المجموعة المختارة من الصور.') }}</p>
+    </header>
+
+    <main class="gallery-container">
+        <div class="gallery-grid">
+            {% if images %}
+                {% for img in images %}
+                <div class="gallery-item">
+                    <img src="{{ img.url }}" alt="{{ img.title }}">
+                    <div class="image-overlay">
+                        <h3>{{ img.title }}</h3>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

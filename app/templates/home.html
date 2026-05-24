@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ ui.nav_home }}{% endblock %}
+
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+
+{% block content %}
+    <header class="hero-section">
+        <div class="hero-content">
+            <h1>{{ ui.hero_title }}</h1>
+            <p>{{ ui.hero_desc }}</p>
+        </div>
+    </header>
+
+    <main class="landmarks-container">
+        <div class="section-title">
+            <h2>{{ ui.section_title }}</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="cards-grid">
+            {% if places %}
+                {% for place in places %}
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/' + place.image_file) }}" alt="{{ place.name }}" class="card-image">
+                    <div class="card-content">
+                        <span class="category-badge">{{ place.category }}</span>
+                        <h3 class="card-title">{{ place.name }}</h3>
+                        <p class="card-description">{{ place.description }}</p>
+                        <div class="card-footer">
+                            <span class="rating">{{ ui.text_rating }} {{ place.rating }}/5</span>
+                            <a href="{{ url_for('place_details.place_details', place_id=place.id, lang=lang) }}" class="btn-details">{{ ui.btn_details }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ ui.register_title }}{% endblock %}
+
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='contact.css') }}">
+{% endblock %}
+
+{% block content %}
+    <main class="contact-container" style="justify-content: center; margin-top: 50px; margin-bottom: 50px;">
+        <section class="contact-form-section" style="max-width: 500px; width: 100%;">
+            <h2 style="text-align: center;">{{ ui.register_title }}</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="" method="POST" class="contact-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label>{{ ui.label_username }}</label>
+                    {{ form.username(class="form-control", placeholder=ui.ph_username) }}
+                    {% if form.username.errors %}
+                        <span style="color: red; font-size: 0.85rem;">{{ ui.err_required }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ ui.label_email }}</label>
+                    {{ form.email(class="form-control", placeholder=ui.ph_email) }}
+                    {% if form.email.errors %}
+                        <span style="color: red; font-size: 0.85rem;">{{ ui.err_email }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label>{{ ui.label_country }}</label>
+                    {{ form.country(class="form-control", style="padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px;") }}
+                    {% if form.country.errors %}
+                        <span style="color: red; font-size: 0.85rem;">{{ ui.err_required }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ ui.label_password }}</label>
+                    {{ form.password(class="form-control", placeholder=ui.ph_password) }}
+                    {% if form.password.errors %}
+                        <span style="color: red; font-size: 0.85rem;">{{ ui.err_password_short }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ ui.label_confirm_password }}</label>
+                    {{ form.confirm_password(class="form-control", placeholder=ui.ph_confirm) }}
+                    {% if form.confirm_password.errors %}
+                        <span style="color: red; font-size: 0.85rem;">{{ ui.err_match }}</span>
+                    {% endif %}
+                </div>
+                
+                {{ form.submit(class="submit-btn", value=ui.btn_register) }}
+            </form>
+            
+            <p style="margin-top: 20px; text-align: center;">
+                {{ ui.already_have_account }} 
+                <a href="{{ url_for('auth.login', lang=lang) }}" style="color: #0056b3; font-weight: bold;">{{ ui.link_login }}</a>
+            </p>
+        </section>
+    </main>
+{% endblock %}

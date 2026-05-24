@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}{{ ui.flight_title }} {{ destination }}{% endblock %}
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='book_flight.css') }}">
+{% endblock %}
+{% block content %}
+    <main class="booking-container">
+        <section class="booking-form-section">
+            <h2 class="form-header-title">✈️ {{ ui.flight_title }} <span class="dest-highlight">{{ destination }}</span></h2>
+            
+            <form action="" method="POST" class="flight-form">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label>{{ ui.dep_city }}</label>
+                    {{ form.departure(class="form-control", placeholder="e.g. London, Dubai, Paris...") }}
+                </div>
+                
+                <div class="form-group">
+                    <label>{{ ui.travel_date }}</label>
+                    {{ form.travel_date(class="form-control", type="date") }}
+                </div>
+                
+                {{ form.submit(class="submit-btn flight-submit-btn", value=ui.btn_confirm_flight) }}
+            </form>
+        </section>
+    </main>
+{% endblock %}

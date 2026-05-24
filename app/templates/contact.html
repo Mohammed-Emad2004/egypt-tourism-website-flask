@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}{{ ui.nav_contact }}{% endblock %}
+{% block custom_css %}<link rel="stylesheet" href="{{ url_for('static', filename='contact.css') }}">{% endblock %}
+{% block content %}
+    <header class="contact-header">
+        <h1>{{ ui.contact_title }}</h1><p>{{ ui.contact_desc }}</p>
+    </header>
+    <main class="contact-container">
+        <aside class="contact-info">
+            <h2>{{ ui.info_title }}</h2>
+            <div class="info-item"><span class="info-label">{{ ui.address_label }}</span><p>{{ ui.address_text }}</p></div>
+            <div class="info-item"><span class="info-label">{{ ui.email_label }}</span><p>mh6061443@gmail.com</p></div>
+            <div class="info-item"><span class="info-label">{{ ui.phone_label }}</span><p dir="ltr">+20 109 088 5237</p></div>
+        </aside>
+        <section class="contact-form-section">
+            <h2>{{ ui.form_title }}</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="" method="POST" class="contact-form">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <label>{{ ui.label_fname }}</label>
+                    {{ form.FName(class="form-control", placeholder=ui.ph_fname) }}
+                </div>
+                <div class="form-group">
+                    <label>{{ ui.label_lname }}</label>
+                    {{ form.LName(class="form-control", placeholder=ui.ph_lname) }}
+                </div>
+                <div class="form-group">
+                    <label>{{ ui.email_label }}</label>
+                    {{ form.email(class="form-control", placeholder="example@mail.com") }}
+                </div>
+                <div class="form-group">
+                    <label>{{ ui.label_message }}</label>
+                    {{ form.message(class="form-control", rows="5", placeholder=ui.ph_message) }}
+                </div>
+                {{ form.submit(class="submit-btn", value=ui.btn_send) }}
+            </form>
+        </section>
+    </main>
+{% endblock %}

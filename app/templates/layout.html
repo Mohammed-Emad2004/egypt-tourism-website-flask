@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+    {% block custom_css %}{% endblock %}
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Discover Egypt</div>
+        <ul class="nav-links">
+            {% if not session.get('role') or session.get('role') == 'user' %}
+                <li><a href="{{ url_for('home.home', lang=lang) }}" class="{% if request.endpoint == 'home.home' %}active{% endif %}">{{ ui.nav_home }}</a></li>
+                <li><a href="{{ url_for('destinations.destinations', lang=lang) }}" class="{% if request.endpoint == 'destinations.destinations' %}active{% endif %}">{{ ui.nav_destinations }}</a></li>
+                <li><a href="{{ url_for('gallery.gallery', lang=lang) }}" class="{% if request.endpoint == 'gallery.gallery' %}active{% endif %}">{{ ui.nav_gallery }}</a></li>
+                <li><a href="{{ url_for('about.about', lang=lang) }}" class="{% if request.endpoint == 'about.about' %}active{% endif %}">{{ ui.nav_about }}</a></li>
+                <li><a href="{{ url_for('contact.contact', lang=lang) }}" class="{% if request.endpoint == 'contact.contact' %}active{% endif %}">{{ ui.nav_contact }}</a></li>
+            {% endif %}
+            
+            {% if session.get('user_id') %}
+                {% if session.get('role') == 'admin' %}
+                    <li><a href="{{ url_for('admin.admin_dashboard', lang=lang) }}" style="color: #e74c3c; font-weight: bold;">⚙️ {{ ui.nav_admin }}</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('profile.profile', lang=lang) }}" class="{% if request.endpoint == 'profile.profile' %}active{% endif %}" style="color: #f39c12;">👤 {{ session.get('username') }}</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">{{ ui.nav_logout }}</a></li>
+            {% else %}
+                <li><a href="{{ url_for('auth.login', lang=lang) }}" class="{% if request.endpoint == 'auth.login' %}active{% endif %}">{{ ui.nav_login }}</a></li>
+            {% endif %}
+            
+            <li class="dropdown">
+                <a href="#" class="dropbtn">{{ ui.lang_text }} ▾</a>
+                <div class="dropdown-content">
+                    <a href="{{ request.path }}?lang=en">English</a>
+                    <a href="{{ request.path }}?lang=ar">العربية</a>
+                    <a href="{{ request.path }}?lang=fr">Français</a>
+                    <a href="{{ request.path }}?lang=es">Español</a>
+                    <a href="{{ request.path }}?lang=de">Deutsch</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    {% block content %}{% endblock %}
+</body>
+</html>

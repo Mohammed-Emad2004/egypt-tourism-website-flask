@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block title %}{{ ui.profile_title }}{% endblock %}
+{% block custom_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+{% endblock %}
+{% block content %}
+    <main class="profile-container">
+        <header class="profile-header">
+            <h1>{{ ui.welcome_user }}, {{ user.username }}! 👤</h1>
+            <p>{{ user.email }} | {{ user.country }}</p>
+        </header>
+
+        <section>
+            <h2 class="section-title">✈️ {{ ui.my_bookings }}</h2>
+            {% if bookings %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <tr>
+                        <th>{{ ui.th_airline }}</th>
+                        <th>{{ ui.th_flight }}</th>
+                        <th>{{ ui.th_from }}</th>
+                        <th>{{ ui.th_to }}</th>
+                        <th>{{ ui.th_date }}</th>
+                        <th>{{ ui.th_status }}</th>
+                        <th>⚙️</th> </tr>
+                    {% for b in bookings %}
+                    <tr>
+                        <td><strong>{{ b.airline_name }}</strong></td>
+                        <td dir="ltr">{{ b.flight_number }}</td>
+                        <td>{{ b.departure_city }}</td>
+                        <td>{{ b.destination_city }}</td>
+                        <td dir="ltr">{{ b.travel_date }}</td>
+                        <td><span class="status-badge">{{ ui.status_pending if b.status == 'Pending' else b.status }}</span></td>
+                        <td>
+                            {% if b.status == 'Pending' %}
+                            <form action="" method="POST" style="margin: 0;">
+                                <input type="hidden" name="action" value="cancel_booking">
+                                <input type="hidden" name="booking_id" value="{{ b.id }}">
+                                <button type="submit" style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-family: inherit;">
+                                    ❌ {{ ui.btn_cancel }}
+                                </button>
+                            </form>
+                            {% else %}
+                            <span style="color: #7f8c8d; font-size: 0.9rem;">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% else %}
+                <p class="empty-msg">{{ ui.no_bookings }}</p>
+            {% endif %}
+        </section>
+
+        <section>
+            <h2 class="section-title">⭐ {{ ui.my_reviews }}</h2>
+            {% if reviews %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <tr>
+                        <th>{{ ui.th_place }}</th>
+                        <th>{{ ui.th_rating }}</th>
+                        <th>{{ ui.th_comment }}</th>
+                        <th>{{ ui.th_date }}</th>
+                    </tr>
+                    {% for rev, place_name in reviews %}
+                    <tr>
+                        <td><strong>{{ place_name }}</strong></td>
+                        <td>{% for i in range(rev.rating) %}⭐{% endfor %}</td>
+                        <td>{{ rev.comment }}</td>
+                        <td dir="ltr">{{ rev.created_at.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% else %}
+                <p class="empty-msg">{{ ui.no_reviews }}</p>
+            {% endif %}
+        </section>
+        <section style="margin-top: 50px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h2 class="section-title">⚙️ {{ ui.edit_profile }}</h2>
+            
+            <form action="" method="POST" style="max-width: 500px;">
+                {{ edit_form.hidden_tag() }}
+                <input type="hidden" name="action" value="edit_profile">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">{{ ui.label_email | default('Email') }}</label>
+                    {{ edit_form.email(style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;") }}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">{{ ui.new_password }}</label>
+                    {{ edit_form.password(style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;") }}
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold;">{{ ui.label_confirm_password | default('Confirm Password') }}</label>
+                    {{ edit_form.confirm_password(style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;") }}
+                </div>
+                
+                {{ edit_form.submit(style="background-color: #2980b9; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: inherit;", value=ui.btn_save_changes) }}
+            </form>
+        </section>
+    </main>
+{% endblock %}
